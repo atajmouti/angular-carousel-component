@@ -69,49 +69,26 @@ export class CarouselComponent implements AfterViewInit {
   @ViewChildren(CarouselItemElement, { read: ElementRef })
   private itemsElements: QueryList<ElementRef>;
   @ViewChild("carousel") private carousel: ElementRef;
-  @Input() timing = "250ms ease";
+  @Input() timing = "1250ms ease-in";
   @Input() showControls = true;
+
   @Output() fetchRecordSet: EventEmitter<string>;
 
   private player: AnimationPlayer;
   private itemWidth: number;
-  private currentSlide = 0;
+  public currentSlide = 0;
   carouselWrapperStyle = {};
 
   constructor(private builder: AnimationBuilder) {
     this.fetchRecordSet = new EventEmitter<string>();
   }
-  _next() {
-   
-    if (this.currentSlide === 2) {
-      this.fetchRecordSet.emit("next");
-      return;
-    }
 
-    if( this.currentSlide + 1 === this.items.length ) return;
-    this.currentSlide = (this.currentSlide + 1) % this.items.length;
-    const offset = this.currentSlide * this.itemWidth;
-    const myAnimation : AnimationFactory = this.buildAnimation(offset);
-    this.player = myAnimation.create(this.carousel.nativeElement);
-    this.player.play();
-  }
-
-
-  next() {
+  public next() {
     console.log("[next- this.currentSlide] : " + this.currentSlide);
     console.log("number of items : " + this.items.length);
 
-
-    if (this.items.length === 3) return;
-    if (this.currentSlide + 1 === this.items.length / 3) {
+    if (this.currentSlide === 1) {
       this.fetchRecordSet.emit("next");
-      if (this.items.length == 3) return;
-      this.currentSlide = 0;
-      const offset = this.currentSlide * this.itemWidth * 3;
-      const myAnimation: AnimationFactory = this.buildAnimation(offset);
-      this.player = myAnimation.create(this.carousel.nativeElement);
-      this.player.play();
-      return;
     }
     this.currentSlide = (this.currentSlide + 1) % this.items.length;
     const offset = this.currentSlide * this.itemWidth * 3;
@@ -120,17 +97,14 @@ export class CarouselComponent implements AfterViewInit {
     this.player.play();
   }
 
-  prev() {
+  public prev() {
     console.log("[prev- this.currentSlide] : " + this.currentSlide);
+    console.log("number of items : " + this.items.length);
 
-    if (this.currentSlide === 0) {
+    if (this.currentSlide === 1) {
       this.fetchRecordSet.emit("prev");
-      this.currentSlide = 2; 
-      const offset = this.currentSlide * this.itemWidth * 3;
-      const myAnimation: AnimationFactory = this.buildAnimation(offset);
-      this.player = myAnimation.create(this.carousel.nativeElement);
-      this.player.play();      
       return;
+
     }
 
     this.currentSlide =
@@ -148,6 +122,13 @@ export class CarouselComponent implements AfterViewInit {
     ]);
   }
 
+  ngAfterContentInit() {
+    this.items.changes.subscribe(list => {
+      console.log("ContentChildren subscribe.");
+      console.log(list);
+    });
+  }
+
   ngAfterViewInit() {
     // For some reason only here I need to add setTimeout, in my local env it's working without this.
     console.log(this.items.length);
@@ -157,5 +138,17 @@ export class CarouselComponent implements AfterViewInit {
         width: `${this.itemWidth * 3}px`
       };
     });
+
+    this.items.changes // throws "Cannot read property 'changes' of undefined"
+      .subscribe(() => {
+        console.log("chenges detected");
+        this.currentSlide = 0;
+ /*       this.currentSlide = (this.currentSlide + 1) % this.items.length;
+        const offset = this.currentSlide * this.itemWidth * 3;
+        const myAnimation: AnimationFactory = this.buildAnimation(offset);
+        this.player = myAnimation.create(this.carousel.nativeElement);
+        this.player.play();
+        console.log("chenges detected nb of items : " + this.items.length);*/
+      });
   }
 }

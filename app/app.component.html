@@ -1,6 +1,6 @@
 <div style="margin: 2em" class="container">
 
-  <carousel 
+  <carousel  #blxcarousel
     (fetchRecordSet)="fetch($event)"
     >
     <ng-container *ngFor="let item of items;">
@@ -10,10 +10,10 @@
     </ng-container>
   </carousel>
 
-  <!-- <div style="margin-top: 1em;"> 
+  <div style="margin-top: 1em;"> 
     <a (click)="next()" class="btn btn-success">Next</a>
     <a (click)="prev()" class="btn btn-success">Prev</a>
-  </div>  -->
+  </div> 
 
   <button (click)="addSlide()">Add Slide</button>
 
