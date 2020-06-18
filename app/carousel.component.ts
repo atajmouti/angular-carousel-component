@@ -84,17 +84,21 @@ export class CarouselComponent implements AfterViewInit {
   }
 
   public next() {
-    console.log("[next- this.currentSlide] : " + this.currentSlide);
+    console.log("[ ==> next- this.currentSlide] : " + this.currentSlide);
     console.log("number of items : " + this.items.length);
 
-    if (this.currentSlide === 1) {
+    if (this.currentSlide === this.items.length / 3 - 1 ) {
       this.fetchRecordSet.emit("next");
+      this.currentSlide = 0;
     }
+
     this.currentSlide = (this.currentSlide + 1) % this.items.length;
     const offset = this.currentSlide * this.itemWidth * 3;
     const myAnimation: AnimationFactory = this.buildAnimation(offset);
     this.player = myAnimation.create(this.carousel.nativeElement);
     this.player.play();
+    console.log("[ <== next- this.currentSlide] : " + this.currentSlide);
+
   }
 
   public prev() {
@@ -122,13 +126,6 @@ export class CarouselComponent implements AfterViewInit {
     ]);
   }
 
-  ngAfterContentInit() {
-    this.items.changes.subscribe(list => {
-      console.log("ContentChildren subscribe.");
-      console.log(list);
-    });
-  }
-
   ngAfterViewInit() {
     // For some reason only here I need to add setTimeout, in my local env it's working without this.
     console.log(this.items.length);
@@ -142,13 +139,13 @@ export class CarouselComponent implements AfterViewInit {
     this.items.changes // throws "Cannot read property 'changes' of undefined"
       .subscribe(() => {
         console.log("chenges detected");
-        this.currentSlide = 0;
- /*       this.currentSlide = (this.currentSlide + 1) % this.items.length;
-        const offset = this.currentSlide * this.itemWidth * 3;
-        const myAnimation: AnimationFactory = this.buildAnimation(offset);
-        this.player = myAnimation.create(this.carousel.nativeElement);
-        this.player.play();
-        console.log("chenges detected nb of items : " + this.items.length);*/
+    //    this.currentSlide = 0;
+//  /*       this.currentSlide = (this.currentSlide + 1) % this.items.length;
+//         const offset = this.currentSlide * this.itemWidth * 3;
+//         const myAnimation: AnimationFactory = this.buildAnimation(offset);
+//         this.player = myAnimation.create(this.carousel.nativeElement);
+//         this.player.play();
+//         console.log("chenges detected nb of items : " + this.items.length);*/
       });
   }
 }

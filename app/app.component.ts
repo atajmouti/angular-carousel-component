@@ -11,7 +11,7 @@ export class AppComponent {
   maxRecord = 25;
   index = 0;
   items = [];
-  size = 6;
+  size = 9;
   nomoredata = false;
 
   get data() {
@@ -32,9 +32,10 @@ export class AppComponent {
     if (this.index === this.data.length) {
       this.index = 0;
     }
+
     start = Math.min(this.index, this.data.length - this.size); // => 0 -> 15
     end = Math.min(this.data.length, start + this.size); // 25 -> 25
-    this.index = Math.min(this.index + this.size / 3, this.data.length); // 11
+    this.index = Math.min(this.index + this.size , this.data.length); // 11
     return this.data.slice(start, end);
   }
 
@@ -49,17 +50,9 @@ export class AppComponent {
 
   constructor() {
     this.items = this.nextRecordSet();
-    this.size = 9;
+    console.log(this.items);
   }
 
-  next() {
-    this.carousel.next();
-    console.log(this.carousel.currentSlide);
-  }
-
-  prev() {
-    this.carousel.prev();
-  }
 
   fetch(event) {
     console.log("fetch direction : " + event);
