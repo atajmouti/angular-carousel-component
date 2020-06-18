@@ -87,13 +87,13 @@ export class CarouselComponent implements AfterViewInit {
     console.log("[ ==> next- this.currentSlide] : " + this.currentSlide);
     console.log("number of items : " + this.items.length);
 
-    if (this.currentSlide === this.items.length / 3 - 1 ) {
+    if (this.currentSlide === this.items.length - 2 ) {
       this.fetchRecordSet.emit("next");
-      this.currentSlide = 0;
+      this.currentSlide = -1;
     }
 
     this.currentSlide = (this.currentSlide + 1) % this.items.length;
-    const offset = this.currentSlide * this.itemWidth * 3;
+    const offset = this.currentSlide * this.itemWidth ;
     const myAnimation: AnimationFactory = this.buildAnimation(offset);
     this.player = myAnimation.create(this.carousel.nativeElement);
     this.player.play();
