@@ -11,6 +11,7 @@ export class AppComponent {
   maxRecord = 25;
   index = 0;
   items = [];
+  moreitems = [];
   size = 9;
   nomoredata = false;
 
@@ -24,7 +25,7 @@ export class AppComponent {
     return array;
   }
 
-  nextRecordSet() {
+  nextRecordSet(size) {
     // let start = this.index; // 0 => 0 à 9
     let start = 0;
     let end = 0;
@@ -33,9 +34,9 @@ export class AppComponent {
       this.index = 0;
     }
 
-    start = Math.min(this.index, this.data.length - this.size); // => 0 -> 15
-    end = Math.min(this.data.length, start + this.size); // 25 -> 25
-    this.index = Math.min(this.index + this.size , this.data.length); // 11
+    start = Math.min(this.index, this.data.length - size); // => 0 -> 15
+    end = Math.min(this.data.length, start + size); // 25 -> 25
+    this.index = Math.min(this.index + size , this.data.length); // 11
     return this.data.slice(start, end);
   }
 
@@ -49,8 +50,11 @@ export class AppComponent {
   }
 
   constructor() {
-    this.items = this.nextRecordSet();
+    this.items = this.nextRecordSet(6);
+    this.moreitems = this.nextRecordSet(3);
     console.log(this.items);
+    console.log(this.moreitems);
+
   }
 
 
@@ -62,12 +66,12 @@ export class AppComponent {
       let currentRecordSet = this.previousRecordSet();
       console.log(currentRecordSet);
 
-      if (currentRecordSet.length > 0) this.items = currentRecordSet;
+      if (currentRecordSet.length > 0) this.moreitems = currentRecordSet;
     } else if (event == "next") {
-      let currentRecordSet = this.nextRecordSet();
+      let currentRecordSet = this.nextRecordSet(3);
       console.log(currentRecordSet);
 
-      if (currentRecordSet.length > 0) this.items = currentRecordSet;
+      if (currentRecordSet.length > 0) this.moreitems = currentRecordSet;
     }
   }
 }
