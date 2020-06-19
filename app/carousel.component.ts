@@ -110,18 +110,27 @@ export class CarouselComponent implements AfterViewInit {
   }
 
 next() {
-    //if we are in the last 
-    if (this.currentSlide + 1 == this.items.length / 3 ) {
-      //reorder the QueryList, 
-      let arr = this.items.toArray();
-      console.log(arr);
-      let first = arr.shift();  //remove the first element
-      let second = arr.shift();  //remove the first ElementRef
-      let third = arr.shift();  //remove the first element
 
-      arr = arr.concat([first]);  //Concat at last of the array
-      arr = arr.concat([second]);  //Concat at last of the array
-      arr = arr.concat([third]);  //Concat at last of the array
+    console.log("[ ==> next- this.currentSlide] : " + this.currentSlide);
+    console.log("number of items : " + this.items.length);
+    //if we are in the last 
+    if (this.currentSlide  == this.items.length / 3 ) {
+      //reorder the QueryList, 
+      this.fetchRecordSet.emit("next");
+
+      let arr = this.items.toArray();
+      //console.log(arr);
+      // let first = arr.shift();  //remove the first element
+      // let second = arr.shift();  //remove the first ElementRef
+      // let third = arr.shift();  //remove the first element
+
+      let first1 = arr.shift();  //remove the first element
+      let second1 = arr.shift();  //remove the first ElementRef
+      let third1 = arr.shift();  //remove the first element
+
+      arr = arr.concat([first1]);  //Concat at last of the array
+      arr = arr.concat([second1]);  //Concat at last of the array
+      arr = arr.concat([third1]);  //Concat at last of the array
 
       this.items.reset(arr);
       this.currentSlide--;  //less currentSlide
@@ -129,6 +138,8 @@ next() {
     }
     this.currentSlide = (this.currentSlide + 1) % this.items.length;
     this.transitionCarousel(null);
+     console.log("[ <== next- this.currentSlide] : " + this.currentSlide);
+
   }
 
 

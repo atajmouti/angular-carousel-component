@@ -51,7 +51,7 @@ export class AppComponent {
 
   constructor() {
     this.items = this.nextRecordSet(6);
-    this.moreitems = this.nextRecordSet(3);
+    this.moreitems = this.nextRecordSet(6);
     console.log(this.items);
     console.log(this.moreitems);
 
@@ -68,7 +68,7 @@ export class AppComponent {
 
       if (currentRecordSet.length > 0) this.moreitems = currentRecordSet;
     } else if (event == "next") {
-      let currentRecordSet = this.nextRecordSet(3);
+      let currentRecordSet = this.nextRecordSet(6);
       console.log(currentRecordSet);
 
       if (currentRecordSet.length > 0) this.moreitems = currentRecordSet;
