@@ -30,13 +30,16 @@ export class AppComponent {
     let start = 0;
     let end = 0;
     console.log("Index - next : " + this.index);
-    if (this.index === this.data.length) {
-      this.index = 0;
+    if (this.index + size > this.data.length)
+    if (this.index == this.data.length) {
+        start = 0; 
+        this.index = 0;
+        end = Math.min(this.data.length, start + size); // 25 -> 25
+    } else {
+      start = Math.min(this.index, this.data.length - size); // => 0 -> 15
+      end = Math.min(this.data.length, start + size); // 25 -> 25
     }
-
-    start = Math.min(this.index, this.data.length - size); // => 0 -> 15
-    end = Math.min(this.data.length, start + size); // 25 -> 25
-    this.index = Math.min(this.index + size , this.data.length); // 11
+    this.index = Math.min(this.index + (2*size/3) , this.data.length); // 11
     return this.data.slice(start, end);
   }
 
@@ -50,11 +53,8 @@ export class AppComponent {
   }
 
   constructor() {
-    this.items = this.nextRecordSet(6);
-    this.moreitems = this.nextRecordSet(6);
+    this.items = this.nextRecordSet(9);
     console.log(this.items);
-    console.log(this.moreitems);
-
   }
 
 
@@ -66,12 +66,12 @@ export class AppComponent {
       let currentRecordSet = this.previousRecordSet();
       console.log(currentRecordSet);
 
-      if (currentRecordSet.length > 0) this.moreitems = currentRecordSet;
+      if (currentRecordSet.length > 0) this.items = currentRecordSet;
     } else if (event == "next") {
-      let currentRecordSet = this.nextRecordSet(6);
+      let currentRecordSet = this.nextRecordSet(9);
       console.log(currentRecordSet);
 
-      if (currentRecordSet.length > 0) this.moreitems = currentRecordSet;
+      if (currentRecordSet.length > 0) this.items = currentRecordSet;
     }
   }
 }

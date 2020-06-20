@@ -87,19 +87,18 @@ export class CarouselComponent implements AfterViewInit {
     console.log("[ ==> next- this.currentSlide] : " + this.currentSlide);
     console.log("number of items : " + this.items.length);
 
-    //if we are in the last 
-    if (this.currentSlide + 1 == this.items.length / 3 ) {
+    //if we are in the last
+    if (this.currentSlide + 1 == this.items.length / 3) {
       this.fetchRecordSet.emit("next");
       this.currentSlide = -1;
     }
 
     this.currentSlide = (this.currentSlide + 1) % this.items.length;
-    const offset = this.currentSlide * this.itemWidth ;
+    const offset = this.currentSlide * this.itemWidth;
     const myAnimation: AnimationFactory = this.buildAnimatio(offset);
     this.player = myAnimation.create(this.carousel.nativeElement);
     this.player.play();
     console.log("[ <== next- this.currentSlide] : " + this.currentSlide);
-
   }
 
   transitionCarousel(time: any) {
@@ -109,40 +108,45 @@ export class CarouselComponent implements AfterViewInit {
     this.player.play();
   }
 
-next() {
-
+  next() {
     console.log("[ ==> next- this.currentSlide] : " + this.currentSlide);
     console.log("number of items : " + this.items.length);
-    //if we are in the last 
-    if (this.currentSlide  == this.items.length / 3 ) {
-      //reorder the QueryList, 
-      this.fetchRecordSet.emit("next");
+    //if we are in the last
+    if (this.currentSlide + 1 == this.items.length / 3) {
+      //reorder the QueryList,
 
       let arr = this.items.toArray();
       //console.log(arr);
-      // let first = arr.shift();  //remove the first element
-      // let second = arr.shift();  //remove the first ElementRef
-      // let third = arr.shift();  //remove the first element
+      //remove the 3 last elements
+      // let first = arr.shift();
+      // first = arr.shift();
+      // first = arr.shift();
 
-      let first1 = arr.shift();  //remove the first element
-      let second1 = arr.shift();  //remove the first ElementRef
-      let third1 = arr.shift();  //remove the first element
+      arr = arr.slice(6, 8);
+      // arr = arr.concat([last1]);  //Concat at last of the array
+      // arr = arr.concat([last2]);  //Concat at last of the array
+      // arr = arr.concat([last3]);  //Concat at last of the array
 
-      arr = arr.concat([first1]);  //Concat at last of the array
-      arr = arr.concat([second1]);  //Concat at last of the array
-      arr = arr.concat([third1]);  //Concat at last of the array
+      console.log("number of arr : " + arr.length);
 
-      this.items.reset(arr);
-      this.currentSlide--;  //less currentSlide
-      this.transitionCarousel(0); //execute the animation in 0 seconds
-    }
-    this.currentSlide = (this.currentSlide + 1) % this.items.length;
-    this.transitionCarousel(null);
-     console.log("[ <== next- this.currentSlide] : " + this.currentSlide);
+      this.fetchRecordSet.emit("next");
 
+      let nextarr = this.items.toArray();
+
+      arr = arr.concat(nextarr);
+
+     // this.items.reset(arr);
+      console.log("number of items : " + this.items.length);
+
+      this.currentSlide=0; //less currentSlide
+     this.transitionCarousel(0); //execute the animation in 0 seconds
+    } 
+      this.currentSlide = (this.currentSlide + 1) % this.items.length;
+      this.transitionCarousel(null);
+    
+
+    console.log("[ <== next- this.currentSlide] : " + this.currentSlide);
   }
-
-
 
   public prev() {
     console.log("[prev- this.currentSlide] : " + this.currentSlide);
@@ -151,7 +155,6 @@ next() {
     if (this.currentSlide === 1) {
       this.fetchRecordSet.emit("prev");
       return;
-
     }
 
     this.currentSlide =
@@ -169,11 +172,12 @@ next() {
   //   ]);
   // }
 
-
   private buildAnimation(offset, time: any) {
     return this.builder.build([
-      animate(time == null ? this.timing : 0, 
-          style({ transform: `translateX(-${offset}px)` }))
+      animate(
+        time == null ? this.timing : 0,
+        style({ transform: `translateX(-${offset}px)` })
+      )
     ]);
   }
 

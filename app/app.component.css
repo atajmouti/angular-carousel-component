@@ -6,3 +6,9 @@ p {
 .item {
   margin-right: 10px;
 }
+
+.flex-row {
+  display: flex;
+  flex-direction: row;
+}
+

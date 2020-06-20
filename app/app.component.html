@@ -1,19 +1,11 @@
 <div style="margin: 2em" class="container">
 
-  <carousel  #blxcarousel
-    (fetchRecordSet)="fetch($event)"
-    >
-    <ng-container *ngFor="let item of items;">
-      <ng-container *carouselItem>
-        <div class="item">{{item.title}}</div>
-      </ng-container>
-    </ng-container>
-    <ng-container *ngFor="let item of moreitems;">
-      <ng-container *carouselItem>
-        <div class="item">{{item.title}}</div>
-      </ng-container>
-    </ng-container>
-
-  </carousel>
+	<carousel #blxcarousel (fetchRecordSet)="fetch($event)">
+		<ng-container *ngFor="let item of items;">
+			<ng-container *carouselItem>
+				<div class="item">{{item.title}}</div>
+			</ng-container>
+		</ng-container>
+	</carousel>
 
 </div>
