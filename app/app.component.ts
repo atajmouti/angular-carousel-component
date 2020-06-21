@@ -8,15 +8,15 @@ import { CarouselComponent } from "./carousel.component";
 })
 export class AppComponent {
   @ViewChild(CarouselComponent) carousel: CarouselComponent;
-  maxRecord = 5;
+  maxRecord = 4;
   index = 0;
   items = [];
   moreitems = [];
-  size = 3;
+  slidesize = 4;
   nomoredata = false;
   previtems = [];
 
-  cs = -1 * this.size;
+  cs = -1 * this.slidesize;
 
   get data() {
     let array = [];
@@ -40,7 +40,7 @@ export class AppComponent {
       // complete arr with items from the head of data array
       // Ex arr =  24,0,1
       arr = arr.concat(this.data.slice(0, size - arr.length));
-     // this.cs = -1 * this.size;
+      // this.cs = -1 * this.size;
     }
     return arr;
   }
@@ -49,21 +49,26 @@ export class AppComponent {
     // Generate an infinte chunk of data
     let arr = [];
     let start = 0;
-    let end = 0;    
+    let end = 0;
     if (this.cs - size < 0) this.cs = size;
     start = this.cs = (this.cs - size) % this.maxRecord;
     end = this.cs + size;
-    arr = this.data.slice(start, end);   
+    arr = this.data.slice(start, end);
     return arr;
   }
 
-  constructor() {
-    let arr = this.nextSet(3);
-    this.previtems = this.nextSet(3);
-    arr = arr.concat(this.previtems);
-    if (arr.length > 0) {
-      this.items = arr;
+  init(size) {
+    let arr = [];
+    if (this.data.length <= this.slidesize) {
+      arr = this.nextSet(size);
+    } else {
+      arr = this.nextSet(size);
+      arr = arr.concat(this.previtems);
     }
+    this.items = arr;
+  }
+  constructor() {
+    this.init(this.slidesize);
     console.log(this.items);
   }
 
@@ -73,24 +78,21 @@ export class AppComponent {
     console.log("current - previous  : ");
     console.log(this.previtems);
     if (event == "prev") {
-      this.previtems = this.items.slice(0, 3);
-      this.cs = this.cs - 3;
-      let currentRecordSet = this.previousSet(3);
+      let currentRecordSet = this.previousSet(this.slidesize);
       if (currentRecordSet.length > 0) {
-        if (
-          JSON.stringify(currentRecordSet) != JSON.stringify(this.previtems)
-        ) {
-          // this.previtems = currentRecordSet;
-          //  this.items = currentRecordSet.concat(this.previtems);
-          this.items = this.previtems.concat(currentRecordSet);
-          this.previtems = this.items.slice(4, 6);
+        if (this.cs == -1 * this.slidesize) {
+          this.items = currentRecordSet;
         } else {
-          this.items =  currentRecordSet;
+          this.items = currentRecordSet.concat(this.previtems);
+          this.previtems = currentRecordSet;
         }
         console.log(this.items);
       }
     } else if (event == "next") {
-      let currentRecordSet = this.nextSet(3);
+      if (this.cs == -1 * this.slidesize) {
+        this.init(this.slidesize);
+      }
+      let currentRecordSet = this.nextSet(this.slidesize);
       if (currentRecordSet.length > 0) {
         this.items = this.previtems.concat(currentRecordSet);
         this.previtems = currentRecordSet;

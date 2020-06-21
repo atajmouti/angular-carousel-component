@@ -1,6 +1,6 @@
 <div style="margin: 2em" class="container">
 
-	<carousel #blxcarousel (fetchRecordSet)="fetch($event)">
+	<carousel #blxcarousel [slidesize]="slidesize" (fetchRecordSet)="fetch($event)">
 		<ng-container *ngFor="let item of items;">
 			<ng-container *carouselItem>
 				<div class="item">{{item.title}}</div>

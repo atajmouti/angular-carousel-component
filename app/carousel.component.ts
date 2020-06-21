@@ -71,6 +71,7 @@ export class CarouselComponent implements AfterViewInit {
   @ViewChild("carousel") private carousel: ElementRef;
   @Input() timing = "1250ms ease-in";
   @Input() showControls = true;
+  @Input() slidesize = 4; // number of items per slide
 
   @Output() fetchRecordSet: EventEmitter<string>;
 
@@ -83,66 +84,41 @@ export class CarouselComponent implements AfterViewInit {
     this.fetchRecordSet = new EventEmitter<string>();
   }
 
-  public _next() {
-    console.log("[ ==> next- this.currentSlide] : " + this.currentSlide);
-    console.log("number of items : " + this.items.length);
-
-    //if we are in the last
-    if (this.currentSlide + 1 == this.items.length / 3) {
-      this.fetchRecordSet.emit("next");
-      this.currentSlide = -1;
-    }
-
-    this.currentSlide = (this.currentSlide + 1) % this.items.length;
-    const offset = this.currentSlide * this.itemWidth;
-    const myAnimation: AnimationFactory = this.buildAnimatio(offset);
-    this.player = myAnimation.create(this.carousel.nativeElement);
-    this.player.play();
-    console.log("[ <== next- this.currentSlide] : " + this.currentSlide);
-  }
-
-  transitionCarousel(time: any) {
-    const offset = this.currentSlide * this.itemWidth * ( Math.max(0,this.items.length - 3));
-    const myAnimation: AnimationFactory = this.buildAnimation(offset, time);
-    this.player = myAnimation.create(this.carousel.nativeElement);
-    this.player.play();
-  }
-
   next() {
     console.log("[ ==> next- this.currentSlide] : " + this.currentSlide);
     console.log("number of items : " + this.items.length);
     //if we are in the last
-    if (this.currentSlide + 1 == this.items.length / 3 ) {
+    if (this.currentSlide + 1 == this.items.length / this.slidesize) {
       this.fetchRecordSet.emit("next");
       this.currentSlide--; //less currentSlide
       this.transitionCarousel(0); //execute the animation in 0 seconds
     }
     this.currentSlide = (this.currentSlide + 1) % this.items.length;
     this.transitionCarousel(null);
-
     console.log("[ <== next- this.currentSlide] : " + this.currentSlide);
   }
 
   public prev() {
     console.log("[prev- this.currentSlide] : " + this.currentSlide);
     console.log("number of items : " + this.items.length);
-    if (this.currentSlide - 1 == this.items.length / 3 ) {
+    if (this.currentSlide == 0 && this.items.length > this.slidesize) {
       this.fetchRecordSet.emit("prev");
       this.currentSlide++; //less currentSlide
       this.transitionCarousel(0); //execute the animation in 0 seconds
-  
     }
-    this.currentSlide =
-      (this.currentSlide - 1) % this.items.length;
-    this.transitionCarousel(null);
+    if (this.items.length > this.slidesize ) {
+      this.currentSlide = (this.currentSlide - 1) % this.items.length;
+      this.transitionCarousel(null);
+    }
   }
 
-  // private buildAnimation(offset) {
-  //   return this.builder.build([
-  //     animate(this.timing, style({ transform: `translateX(-${offset}px)` }))
-  //   ]);
-  // }
-
+  transitionCarousel(time: any) {
+    const offset = this.currentSlide * this.itemWidth * this.slidesize;
+    const myAnimation: AnimationFactory = this.buildAnimation(offset, time);
+    this.player = myAnimation.create(this.carousel.nativeElement);
+    this.player.play();
+  }
+  
   private buildAnimation(offset, time: any) {
     return this.builder.build([
       animate(
@@ -158,7 +134,7 @@ export class CarouselComponent implements AfterViewInit {
     setTimeout(() => {
       this.itemWidth = this.itemsElements.first.nativeElement.getBoundingClientRect().width;
       this.carouselWrapperStyle = {
-        width: `${this.itemWidth * 3}px`
+        width: `${this.itemWidth * 4}px`
       };
     });
 
