@@ -8,13 +8,15 @@ import { CarouselComponent } from "./carousel.component";
 })
 export class AppComponent {
   @ViewChild(CarouselComponent) carousel: CarouselComponent;
-  maxRecord = 25;
+  maxRecord = 5;
   index = 0;
   items = [];
   moreitems = [];
-  size = 9;
+  size = 3;
   nomoredata = false;
   previtems = [];
+
+  cs = -1 * this.size;
 
   get data() {
     let array = [];
@@ -26,104 +28,72 @@ export class AppComponent {
     return array;
   }
 
-  _extRecordSet(size) {
-    // let start = this.index; // 0 => 0 à 9
-    let start = 0;
-    let end = 0;
-
-    console.log("Index - next : " + this.index);
-    if (this.index + 9 == this.data.length) {
-      start = 0;
-      this.index = 0;
-      end = Math.min(this.data.length, start + size); // 25 -> 25
-    } else {
-      start = Math.min(this.index, this.data.length - size); // => 0 -> 15
-      end = Math.min(this.data.length, start + size); // 25 -> 25
-    }
-    this.index = Math.min(this.index + (2 * size) / 3, this.data.length); // 11
-    return this.data.slice(start, end);
-  }
-
-  nextRecordSet(size) {
-    let start = 0;
-    let end = 0;
+  nextSet(size) {
+    // Generate an infinte chunk of data
     let arr = [];
-    console.log("Index - next : " + this.index);
-    if (this.index == this.data.length) {
-      this.index = 0;
-      start = 0;
-      end = Math.min(this.data.length, start + 2*size); 
-      this.index = Math.min(this.index + size, this.data.length);
-      arr = this.data.slice(start, end);
-      this.previtems = arr.slice(size/2, size);
-      return arr;
-    }
-    if (this.index + size  >= this.data.length) {
-      start = this.index;
-      end = this.data.length;
-      arr = this.data.slice(start, end);
-      // if (arr.length < size) {
-      //   // complete les size elements par les elemnts du 1er _extRecordSet
-      //   // Ex arr retourné 24,0,1
-      //   arr = arr.concat(this.data.slice(0, size - arr.length));
-      //   this.index = size - arr.length - 1;
-      // }
-      this.index = Math.min(this.index + size, this.data.length);
-      return arr;
-    } else {
-      this.previtems = this.items.slice(3, 6);
-      console.log("previous)");
-      console.log(this.previtems);
-      start = Math.min(this.index, this.data.length - size); // => 0 -> 15
-      end = Math.min(this.data.length, start + size); // 25 -> 25
-      this.index = Math.min(this.index + size, this.data.length);
-    }
+    let start = 0;
+    let end = 0;
+    start = this.cs = (this.cs + size) % this.maxRecord;
+    end = this.cs + size;
     arr = this.data.slice(start, end);
-    arr = this.previtems.concat(arr);
+    if (arr.length < size) {
+      // complete arr with items from the head of data array
+      // Ex arr =  24,0,1
+      arr = arr.concat(this.data.slice(0, size - arr.length));
+     // this.cs = -1 * this.size;
+    }
     return arr;
   }
 
-  previousRecordSet(size) {
-    console.log("Index - prev : " + this.index);
-    let start = 0;
-    let end = 0;
+  previousSet(size) {
+    // Generate an infinte chunk of data
     let arr = [];
-    if (this.index - size >= 0) {
-      start = Math.max(0, this.index - size);
-      end = Math.min(start + size, this.data.length);
-      this.index = Math.max(0, this.index - size);
-      console.log("start - end : " + start + "-" + end);
-      return this.data.slice(start, end);
-    } else {
-      return [];
-    }
+    let start = 0;
+    let end = 0;    
+    if (this.cs - size < 0) this.cs = size;
+    start = this.cs = (this.cs - size) % this.maxRecord;
+    end = this.cs + size;
+    arr = this.data.slice(start, end);   
+    return arr;
   }
 
   constructor() {
-    let arr = this.nextRecordSet(3);
-    this.previtems = this.nextRecordSet(3);
-    this.items = arr.concat(this.previtems);
+    let arr = this.nextSet(3);
+    this.previtems = this.nextSet(3);
+    arr = arr.concat(this.previtems);
+    if (arr.length > 0) {
+      this.items = arr;
+    }
     console.log(this.items);
   }
 
   fetch(event) {
     console.log("fetch direction : " + event);
-    console.log("fetch - Index  : " + this.index);
-
+    console.log("fetch - cs  : " + this.cs);
+    console.log("current - previous  : ");
+    console.log(this.previtems);
     if (event == "prev") {
-      console.log("Previous Recordset");
-      console.log(this.previtems);
-      let currentRecordSet = this.previousRecordSet(3);
-      this.items = currentRecordSet.concat(this.previtems);
-      this.previtems = currentRecordSet;
+      this.previtems = this.items.slice(0, 3);
+      this.cs = this.cs - 3;
+      let currentRecordSet = this.previousSet(3);
       if (currentRecordSet.length > 0) {
-        this.items = currentRecordSet;
+        if (
+          JSON.stringify(currentRecordSet) != JSON.stringify(this.previtems)
+        ) {
+          // this.previtems = currentRecordSet;
+          //  this.items = currentRecordSet.concat(this.previtems);
+          this.items = this.previtems.concat(currentRecordSet);
+          this.previtems = this.items.slice(4, 6);
+        } else {
+          this.items =  currentRecordSet;
+        }
         console.log(this.items);
       }
     } else if (event == "next") {
-      let currentRecordSet = this.nextRecordSet(3);
+      let currentRecordSet = this.nextSet(3);
       if (currentRecordSet.length > 0) {
-        this.items = currentRecordSet;
+        this.items = this.previtems.concat(currentRecordSet);
+        this.previtems = currentRecordSet;
         console.log(this.items);
       }
     }
