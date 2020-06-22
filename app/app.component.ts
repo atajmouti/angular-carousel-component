@@ -7,12 +7,11 @@ import { CarouselComponent } from "./carousel.component";
   styleUrls: ["./app.component.css"]
 })
 export class AppComponent {
-  @ViewChild(CarouselComponent) carousel: CarouselComponent;
-  maxRecord = 4;
+  maxRecord = 25;
   index = 0;
   items = [];
   moreitems = [];
-  slidesize = 4;
+  slidesize = 3;
   nomoredata = false;
   previtems = [];
 
@@ -58,12 +57,11 @@ export class AppComponent {
   }
 
   init(size) {
-    let arr = [];
-    if (this.data.length <= this.slidesize) {
-      arr = this.nextSet(size);
-    } else {
-      arr = this.nextSet(size);
-      arr = arr.concat(this.previtems);
+    let arr = this.nextSet(size);
+    this.previtems = this.nextSet(size);
+    arr = arr.concat(this.previtems);
+    if (arr.length > 0) {
+      this.items = arr;
     }
     this.items = arr;
   }
@@ -100,4 +98,5 @@ export class AppComponent {
       }
     }
   }
-}
+
+  }

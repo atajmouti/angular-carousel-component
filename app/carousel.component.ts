@@ -63,7 +63,7 @@ export class CarouselItemElement {}
   ]
 })
 export class CarouselComponent implements AfterViewInit {
-  @ContentChildren(CarouselItemDirective) items: QueryList<
+   @ContentChildren(CarouselItemDirective) items: QueryList<
     CarouselItemDirective
   >;
   @ViewChildren(CarouselItemElement, { read: ElementRef })
@@ -134,7 +134,7 @@ export class CarouselComponent implements AfterViewInit {
     setTimeout(() => {
       this.itemWidth = this.itemsElements.first.nativeElement.getBoundingClientRect().width;
       this.carouselWrapperStyle = {
-        width: `${this.itemWidth * 4}px`
+        width: `${this.itemWidth * this.slidesize }px`
       };
     });
 
@@ -143,4 +143,4 @@ export class CarouselComponent implements AfterViewInit {
         console.log("chenges detected");
       });
   }
-}
+ }
